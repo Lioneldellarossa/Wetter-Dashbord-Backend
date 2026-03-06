@@ -27,7 +27,7 @@ Führe folgenden Befehl aus:
 ```bash
 docker-compose up -d
 ```
-*Die Datenbank ist dann unter `localhost:3306` erreichbar (Benutzer: `user`, Passwort: `password`, Datenbank: `wetter_dashboard`).*
+*Die Datenbank ist dann unter `localhost:3307` erreichbar (Benutzer: `user`, Passwort: `password`, Datenbank: `wetter_dashboard`).*
 
 ### 2. Spring Boot Applikation starten
 Nachdem die Datenbank läuft, kannst du das Backend über Gradle starten:
