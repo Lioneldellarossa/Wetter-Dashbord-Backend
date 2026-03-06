@@ -3,8 +3,8 @@ spring:
     name: wetter-dashboard-api
   datasource:
     url: jdbc:mysql://localhost:3307/wetter_dashboard?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
-    username: user
-    password: password
+    username: root
+    password: 1234
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:

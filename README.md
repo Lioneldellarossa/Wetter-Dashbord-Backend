@@ -6,7 +6,7 @@ Ein Java 21 Spring Boot REST API Backend für ein Wetter- und Lüftungs-Dashboar
 * **Java:** 21
 * **Framework:** Spring Boot 3.5.0
 * **Build Tool:** Gradle
-* **Datenbank:** MySQL 8.0 (mit Docker Compose)
+* **Datenbank:** Lokale MySQL Installation
 * **ORM:** Spring Data JPA / Hibernate
 * **Hilfstools:** Lombok, Spring Boot Validation
 
@@ -14,23 +14,62 @@ Ein Java 21 Spring Boot REST API Backend für ein Wetter- und Lüftungs-Dashboar
 
 ## Voraussetzung
 * Java 21 JDK installiert
-* Docker und Docker Compose installiert
+* Eine lokal installierte MySQL-Datenbank auf Port 3307
 
 ---
 
 ## Lokale Entwicklung und Start
 
-### 1. Datenbank starten
-Im Hauptverzeichnis befindet sich eine `docker-compose.yml` Datei, die eine MySQL Datenbank hochfährt und automatisch die benötigten Tabellen (`locations`, `weather_metrics`, `ventilation_cycles`) sowie die Dashboard-View erstellt.
-
-Führe folgenden Befehl aus:
-```bash
-docker-compose up -d
+### 1. Datenbank vorbereiten
+Stellen Sie sicher, dass Ihre lokale MySQL-Datenbank läuft (auf `localhost:3307`).
+Legen Sie darin ein Schema/eine Datenbank mit dem Namen `wetter_dashboard` an:
+```sql
+CREATE DATABASE wetter_dashboard;
 ```
-*Die Datenbank ist dann unter `localhost:3307` erreichbar (Benutzer: `user`, Passwort: `password`, Datenbank: `wetter_dashboard`).*
+
+**Hinweis:** In der `application.yml` sind aktuell folgende Zugangsdaten hinterlegt:
+* **Benutzer:** root
+* **Passwort:** 1234
+* **Port:** 3307
+
+Die Tabellen werden durch Hibernate (dank `ddl-auto: update`) beim ersten Start automatisch erstellt.
+
+Um den Endpunkt `/api/dashboard/{locationId}` korrekt zu nutzen, müssen Sie zusätzlich **manuell** diesen View-Code in Ihrer MySQL-Datenbank (z.B. über phpMyAdmin, DBeaver oder MySQL Workbench) ausführen:
+
+```sql
+CREATE VIEW vw_current_dashboard AS
+SELECT
+    l.id AS location_id,
+    l.name AS location_name,
+    w.temperature,
+    w.weather_condition,
+    w.humidity_percent,
+    w.wind_speed_kmh,
+    w.pressure_hpa,
+    w.cloud_cover_percent,
+    w.precipitation_mm,
+    w.air_quality_status,
+    vc.ventilation_duration_minutes,
+    vc.closed_duration_hours,
+    vc.next_cycle_target,
+    vc.system_status
+FROM locations l
+-- Holt die aktuellsten Wetterdaten über eine Subquery
+LEFT JOIN weather_metrics w ON w.id = (
+    SELECT id FROM weather_metrics
+    WHERE location_id = l.id
+    ORDER BY recorded_at DESC LIMIT 1
+)
+-- Holt den aktuell aktiven Lüftungszyklus über eine Subquery
+LEFT JOIN ventilation_cycles vc ON vc.id = (
+    SELECT id FROM ventilation_cycles
+    WHERE location_id = l.id AND is_active = 1
+    ORDER BY calculated_at DESC LIMIT 1
+);
+```
 
 ### 2. Spring Boot Applikation starten
-Nachdem die Datenbank läuft, kannst du das Backend über Gradle starten:
+Starten Sie das Backend über Gradle:
 
 ```bash
 ./gradlew bootRun
