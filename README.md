@@ -22,12 +22,12 @@ Ein Java 21 Spring Boot REST API Backend für ein Wetter- und Lüftungs-Dashboar
 
 ### 1. Datenbank vorbereiten
 Stellen Sie sicher, dass Ihre lokale MySQL-Datenbank läuft (auf `localhost:3307`).
-Legen Sie darin ein Schema/eine Datenbank mit dem Namen `wetter_dashboard` an:
+Legen Sie darin ein Schema/eine Datenbank mit dem Namen `ventilation_db` an:
 ```sql
-CREATE DATABASE wetter_dashboard;
+CREATE DATABASE ventilation_db;
 ```
 
-**Hinweis:** In der `application.yml` sind aktuell folgende Zugangsdaten hinterlegt:
+**Hinweis:** In der `application.properties` sind aktuell folgende Zugangsdaten hinterlegt:
 * **Benutzer:** root
 * **Passwort:** 1234
 * **Port:** 3307
