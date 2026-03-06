@@ -2,7 +2,7 @@ spring:
   application:
     name: wetter-dashboard-api
   datasource:
-    url: jdbc:mysql://localhost:3306/wetter_dashboard?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+    url: jdbc:mysql://localhost:3307/wetter_dashboard?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
     username: user
     password: password
     driver-class-name: com.mysql.cj.jdbc.Driver
